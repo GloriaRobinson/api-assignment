@@ -16,21 +16,16 @@ class Subject(db.Model):
     name = db.Column(db.String(200), nullable=False)
     year = db.Column(db.Integer, nullable=False)
 
+# Define Student Model
+class Student(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    program = db.Column(db.String(100), nullable=False)
+
 @app.route('/students', methods=['GET'])
 def get_students():
-    students = [
-        {"name": "Alice", "program": "Software Engineering"},
-        {"name": "Bob", "program": "Computer Science"},
-        {"name": "Charlie", "program": "Software Engineering"},
-        {"name": "David", "program": "Information Technology"},
-        {"name": "Eve", "program": "Cybersecurity"},
-        {"name": "Frank", "program": "Data Science"},
-        {"name": "Grace", "program": "Artificial Intelligence"},
-        {"name": "Hannah", "program": "Machine Learning"},
-        {"name": "Ian", "program": "Software Engineering"},
-        {"name": "Jack", "program": "Cloud Computing"}
-    ]
-    return jsonify(students)
+    students = Student.query.all()
+    return jsonify([{"name": student.name, "program": student.program} for student in students])
 
 @app.route('/subjects', methods=['GET'])
 def get_subjects():
@@ -115,9 +110,25 @@ def get_subjects():
                 db.session.commit()
 
     return jsonify(subjects)
+
 if __name__ == '__main__':
     app.run(debug=True, port=5001)  
 
-
 with app.app_context():
     db.create_all()
+    # Initialize students if table is empty
+    if Student.query.count() == 0:
+        initial_students = [
+            Student(name="Alice", program="Software Engineering"),
+            Student(name="Bob", program="Computer Science"),
+            Student(name="Charlie", program="Software Engineering"),
+            Student(name="David", program="Information Technology"),
+            Student(name="Eve", program="Cybersecurity"),
+            Student(name="Frank", program="Data Science"),
+            Student(name="Grace", program="Artificial Intelligence"),
+            Student(name="Hannah", program="Machine Learning"),
+            Student(name="Ian", program="Software Engineering"),
+            Student(name="Jack", program="Cloud Computing")
+        ]
+        db.session.bulk_save_objects(initial_students)
+        db.session.commit()
