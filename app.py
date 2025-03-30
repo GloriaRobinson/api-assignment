@@ -3,24 +3,13 @@ import mysql.connector
 
 app = Flask(__name__)
 
-# Set MySQL database URI
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:mysql@localhost/studentapi'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-# Initialize SQLAlchemy
-db = SQLAlchemy(app)
-
-# Define Subject Model
-class Subject(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(200), nullable=False)
-    year = db.Column(db.Integer, nullable=False)
-
-# Define Student Model
-class Student(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False)
-    program = db.Column(db.String(100), nullable=False)
+# MySQL Database Connection
+db = mysql.connector.connect(
+    host="localhost",  
+    user="root",       
+    password="mysql",  
+    database="studentapi"
+)
 
 @app.route('/students', methods=['GET'])
 def get_students():
